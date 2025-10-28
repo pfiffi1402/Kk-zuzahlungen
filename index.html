@@ -1,148 +1,343 @@
-<div id="zuzahlungsrechner-container">
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zuzahlungsrechner (Farbig & Aufgeräumt)</title>
     <style>
-        #zuzahlungsrechner-container {
-            font-family: Arial, sans-serif;
-            margin: 20px auto;
-            max-width: 600px;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            background-color: #f9f9f9;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        /* Globale Stile */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f7; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
         }
-        #zuzahlungsrechner-container h1 {
-            text-align: center;
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-            color: #333;
-        }
-        #zuzahlungsrechner-container label {
-            font-size: 0.9rem;
-            color: #555;
-            margin-bottom: 5px;
-            display: block;
-        }
-        #zuzahlungsrechner-container input,
-        #zuzahlungsrechner-container select,
-        #zuzahlungsrechner-container button {
+
+        /* Haupt-Card des Rechners */
+        .calculator-card {
+            background: linear-gradient(145deg, #f9fbfd, #e3e9f0); /* Sanfter, heller Farbverlauf */
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15); /* Tieferer Schatten */
             width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            max-width: 420px; 
+            border: 1px solid #d4dee7;
+        }
+
+        .calculator-card h2 {
+            text-align: center;
+            color: #1f3b4d;
+            margin-bottom: 35px;
+            font-size: 1.75rem;
+            font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #6c757d; /* Dunkle, klare Trennlinie */
+        }
+
+        /* Formular-Elemente */
+        .input-group {
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed #e1e4e7; /* Gestrichelte Trennung der Gruppen */
+        }
+
+        .input-group:last-of-type {
+            border-bottom: none;
+            padding-bottom: 0;
+            margin-bottom: 30px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #343a40;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ced4da;
+            border-radius: 8px;
             font-size: 1rem;
             box-sizing: border-box;
+            background-color: #ffffff;
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
-        #zuzahlungsrechner-container button {
-            background-color: #007BFF;
-            color: #fff;
+
+        .input-group input:focus,
+        .input-group select:focus {
+            border-color: #20c997; /* Türkisgrün als Fokus-Farbe */
+            box-shadow: 0 0 0 3px rgba(32, 201, 151, 0.2);
+            outline: none;
+        }
+
+        /* Buttons */
+        .button-group button {
+            width: 100%;
+            padding: 16px;
             border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 700;
             cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
         }
-        #zuzahlungsrechner-container button:hover {
-            background-color: #0056b3;
+
+        #calculate-button {
+            background-color: #17a2b8; /* Dunkles Cyan/Türkis */
+            color: white;
+            box-shadow: 0 5px 15px rgba(23, 162, 184, 0.3);
+            margin-bottom: 15px;
         }
-        #zuzahlungsrechner-container .result {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #e9f7ef;
+
+        #calculate-button:hover {
+            background-color: #138496;
+            box-shadow: 0 7px 20px rgba(23, 162, 184, 0.4);
+        }
+        
+        #reset-button {
+            background-color: #e9ecef; /* Hellgrau für Reset */
+            color: #6c757d;
+            padding: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        #reset-button:hover {
+            background-color: #d8d8d8;
+        }
+
+        /* Ergebnis-Bereich */
+        #zuzahlungResult {
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            line-height: 1.6;
+            font-size: 1rem;
+            display: none; 
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .result-info {
+            background-color: #fff3cd; 
+            border: 1px solid #ffeeba;
+            color: #856404;
+        }
+
+        .result-success {
+            background-color: #d4edda; 
             border: 1px solid #c3e6cb;
-            border-radius: 4px;
             color: #155724;
         }
-        #zuzahlungsrechner-container .result p {
-            margin: 5px 0;
+        
+        #zuzahlungResult strong {
+            font-weight: 700;
+            color: inherit; 
+        }
+
+        .limit-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin: 10px 0 15px;
+            color: #17a2b8; /* Haupt-Akzentfarbe für Zahlen */
+        }
+        .result-success .limit-value {
+             color: #28a745; /* Grüner Akzent für Erfolg */
+        }
+        .result-info .limit-value {
+             color: #c09853; /* Dunkleres Gelb für Zahlen im Info-Feld */
         }
     </style>
-    <h1>Zuzahlungsrechner</h1>
-    <label for="income">Monatliches Bruttoeinkommen (in Euro):</label>
-    <input type="number" id="income" placeholder="z. B. 3000" required />
+</head>
+<body>
 
-    <label for="familyStatus">Familienstand:</label>
-    <select id="familyStatus" required>
-        <option value="alleinstehend">Alleinstehend</option>
-        <option value="verheiratet">Verheiratet</option>
-    </select>
+    <div class="calculator-card">
+        <h2>Zuzahlungsrechner</h2>
 
-    <label for="children">Anzahl der Kinder (optional):</label>
-    <input type="number" id="children" placeholder="z. B. 2" />
+        <form id="zuzahlungsForm">
+            <div class="input-group">
+                <label for="income">Monatliches Bruttoeinkommen (€)</label>
+                <input type="number" id="income" placeholder="Bitte eingeben" required />
+            </div>
 
-    <label for="payments">Bisherige Zuzahlungen (in Euro, optional):</label>
-    <input type="number" id="payments" placeholder="z. B. 100" />
+            <div class="input-group">
+                <label for="familyStatus">Status und Belastungsgrenze</label>
+                <select id="familyStatus" required>
+                    <option value="default" disabled selected>Bitte wählen</option>
+                    <option value="alleinstehend">Alleinstehend (2% Grenze)</option>
+                    <option value="verheiratet">Verheiratet/Partner (2% Grenze)</option>
+                    <option value="chronisch_allein">Alleinstehend, Chronisch krank (1% Grenze)</option>
+                    <option value="chronisch_verh">Verheiratet/Partner, Chronisch krank (1% Grenze)</option>
+                </select>
+            </div>
 
-    <label for="year">Jahr:</label>
-    <select id="year">
-        <!-- Jahre werden dynamisch hinzugefügt -->
-    </select>
+            <div class="input-group">
+                <label for="children">Anzahl der Kinder</label>
+                <input type="number" id="children" placeholder="Bitte eingeben" value="" min="0"/>
+            </div>
 
-    <button onclick="calculateZuzahlungen()">Berechnen</button>
+            <div class="input-group">
+                <label for="payments">Bisherige Zuzahlungen dieses Jahr (€)</label>
+                <input type="number" id="payments" placeholder="Bitte eingeben" value="" min="0"/>
+            </div>
 
-    <div class="result" id="zuzahlungResult" style="display: none;">
-        Ergebnisse werden hier angezeigt.
+            <div class="input-group">
+                <label for="year">Jahr der Berechnung</label>
+                <select id="year">
+                    </select>
+            </div>
+
+            <div class="button-group">
+                <button type="button" id="calculate-button" onclick="calculateZuzahlungen()">Belastungsgrenze berechnen</button>
+            </div>
+        </form>
+
+        <div id="zuzahlungResult" class="result-info">
+            </div>
+        
+        <button type="button" id="reset-button" onclick="resetForm()">Daten löschen</button>
+
     </div>
 
     <script>
+        // ACHTUNG: Die Freibeträge für 2026 bis 2030 sind HOCHRECHNUNGEN ohne gesetzliche Grundlage!
         const allowances = {
-            "2025": { single: 6500, married: 13000, child: 3700 },
-            "2026": { single: 6650, married: 13300, child: 3750 },
-            // Weitere zukünftige Jahre können hier ergänzt werden.
+            "2024": { spouse: 6363, child: 9312 }, 
+            "2025": { spouse: 6741, child: 9600 }, 
+            "2026": { spouse: 7000, child: 9900 },
+            "2027": { spouse: 7300, child: 10200 },
+            "2028": { spouse: 7600, child: 10500 },
+            "2029": { spouse: 7900, child: 10800 },
+            "2030": { spouse: 8200, child: 11100 }
         };
-
+        
+        // Füllt das Dropdown-Menü mit den verfügbaren Jahren und wählt das aktuelle Jahr aus
         function populateYearOptions() {
             const yearSelect = document.getElementById("year");
-            const currentYear = new Date().getFullYear();
-            const currentMonth = new Date().getMonth() + 1; // Monat von 0-11
+            // Wichtig: Optionen löschen, falls die Funktion mehrfach aufgerufen wird (z.B. durch Reset)
+            yearSelect.innerHTML = ''; 
+            const currentYear = new Date().getFullYear().toString(); 
+            
+            // Sortiere absteigend (neuestes Jahr zuerst)
+            const availableYears = Object.keys(allowances).sort((a, b) => b - a); 
+            let currentYearFound = false;
 
-            const baseYear = 2025;
+            availableYears.forEach(yearStr => {
+                const option = document.createElement("option");
+                option.value = yearStr;
+                option.textContent = yearStr;
+                
+                // Wählt das aktuelle Jahr als Standard, wenn es in den Daten ist
+                if (yearStr === currentYear) {
+                     option.selected = true;
+                     currentYearFound = true;
+                }
+                yearSelect.appendChild(option);
+            });
 
-            // Füge nur das Basisjahr hinzu
-            const option1 = document.createElement("option");
-            option1.value = baseYear.toString();
-            option1.textContent = baseYear;
-            yearSelect.appendChild(option1);
-
-            // Füge das nächste Jahr hinzu, wenn der Monat September oder später ist
-            if (currentYear >= baseYear && currentMonth >= 9) {
-                const option2 = document.createElement("option");
-                option2.value = (baseYear + 1).toString();
-                option2.textContent = baseYear + 1;
-                yearSelect.appendChild(option2);
+            // Fallback: Wenn das aktuelle Jahr nicht in den Daten war, wähle das neueste verfügbare Jahr
+            if (!currentYearFound && availableYears.length > 0) {
+                 yearSelect.options[0].selected = true;
             }
         }
 
+        // NEUE FUNKTION: Setzt das Formular zurück
+        function resetForm() {
+            document.getElementById("income").value = "";
+            document.getElementById("children").value = "";
+            document.getElementById("payments").value = "";
+            document.getElementById("familyStatus").value = "default";
+            document.getElementById("zuzahlungResult").style.display = "none";
+            // Setze das Jahr auf das aktuelle Jahr zurück
+            populateYearOptions(); 
+            document.getElementById("income").focus(); // Fokus auf das erste Feld
+        }
+
+        // Hauptberechnungsfunktion
         function calculateZuzahlungen() {
-            const income = parseFloat(document.getElementById("income").value);
-            const familyStatus = document.getElementById("familyStatus").value;
+            const income = parseFloat(document.getElementById("income").value) || 0;
+            const status = document.getElementById("familyStatus").value;
             const children = parseInt(document.getElementById("children").value) || 0;
             const payments = parseFloat(document.getElementById("payments").value) || 0;
             const year = document.getElementById("year").value;
+            const resultDiv = document.getElementById("zuzahlungResult");
 
             const yearData = allowances[year];
-            if (!yearData) {
-                alert("Freibeträge für das gewählte Jahr sind nicht verfügbar.");
+            if (!yearData || status === "default" || income === 0) {
+                resultDiv.className = "result-info";
+                resultDiv.style.display = "block";
+                resultDiv.innerHTML = "<p><strong>Fehler:</strong> Bitte geben Sie das Einkommen ein und wählen Sie einen gültigen Status.</p>";
                 return;
             }
 
-            let allowance = familyStatus === "verheiratet" ? yearData.married : yearData.single;
-            allowance += children * yearData.child;
-
+            // 1. Parameter bestimmen
             const annualIncome = income * 12;
-            const taxableIncome = Math.max(annualIncome - allowance, 0);
-            const burdenLimit = taxableIncome * 0.02;
+            let totalAllowance = 0;
+            let burdenRate = 0.02; // Standard: 2%
 
+            // Status-basierte Logik
+            if (status.includes("chronisch")) {
+                burdenRate = 0.01; // Chronisch krank: 1%
+            }
+            if (status.includes("verheiratet") || status.includes("_verh")) {
+                totalAllowance += yearData.spouse; // Freibetrag für Ehepartner
+            }
+            
+            // Freibetrag für Kinder
+            totalAllowance += children * yearData.child;
+
+            // 2. Maßgebliches Einkommen
+            const taxableIncome = Math.max(annualIncome - totalAllowance, 0);
+
+            // 3. Belastungsgrenze
+            const burdenLimit = taxableIncome * burdenRate;
+
+            // 4. Verbleibende Zuzahlungen
             const remainingPayments = Math.max(burdenLimit - payments, 0);
 
-            const resultDiv = document.getElementById("zuzahlungResult");
+            // 5. Ergebnis anzeigen
+            const limitFormatted = burdenLimit.toFixed(2).replace('.', ',');
+            const remainingFormatted = remainingPayments.toFixed(2).replace('.', ',');
+            const taxableFormatted = taxableIncome.toFixed(2).replace('.', ',');
+            const rateFormatted = (burdenRate * 100).toFixed(0);
+            
             resultDiv.style.display = "block";
-            resultDiv.innerHTML = `
-                <p><strong>Jahr: ${year}</strong></p>
-                <p>Ihre individuelle Belastungsgrenze: <strong>${burdenLimit.toFixed(2)} Euro</strong></p>
-                ${remainingPayments === 0 
-                    ? "<p>Sie haben die Belastungsgrenze erreicht. Keine weiteren Zuzahlungen erforderlich.</p>"
-                    : `<p>Verbleibende Zuzahlungen bis zur Belastungsgrenze: <strong>${remainingPayments.toFixed(2)} Euro</strong></p>`}
-            `;
+            
+            if (remainingPayments <= 0.01) { // 0.01 als Toleranz
+                resultDiv.className = "result-success";
+                resultDiv.innerHTML = `
+                    <p style="font-size: 1.1rem; font-weight: 600;">Ihre Belastungsgrenze (${rateFormatted}% Grenze) liegt bei:</p>
+                    <div class="limit-value"><strong>${limitFormatted} €</strong></div>
+                    <p style="font-size: 1.1rem; font-weight: 700;">**Befreiung erreicht!**</p>
+                    <p>Beantragen Sie bei Ihrer Krankenkasse die Befreiung für das restliche Jahr.</p>
+                    <p style="font-size: 0.85rem; opacity: 0.8; margin-top: 15px;">Maßgebliches Einkommen: ${taxableFormatted} €</p>
+                `;
+            } else {
+                resultDiv.className = "result-info";
+                resultDiv.innerHTML = `
+                    <p style="font-size: 1.1rem; font-weight: 600;">Ihre Belastungsgrenze (${rateFormatted}% Grenze) liegt bei:</p>
+                    <div class="limit-value"><strong>${limitFormatted} €</strong></div>
+                    <p style="font-size: 1.1rem; font-weight: 600;">Verbleibende Zuzahlungen bis zur Grenze:</p>
+                    <p class="limit-value" style="color: #c09853;"><strong>${remainingFormatted} €</strong></p>
+                    <p style="font-size: 0.85rem; opacity: 0.8; margin-top: 15px;">Maßgebliches Einkommen: ${taxableFormatted} €</p>
+                `;
+            }
         }
 
         document.addEventListener("DOMContentLoaded", populateYearOptions);
     </script>
-</div>
+</body>
+</html>
